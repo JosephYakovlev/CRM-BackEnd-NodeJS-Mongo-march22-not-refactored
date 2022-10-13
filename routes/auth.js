@@ -17,7 +17,8 @@ router.post("/register", upload.single('image'), async (req,res) => {
 
       const fileStr = req.body.avatar;
       const result = fileStr ? await cloudinary.uploader.upload(`data:image/jpeg;base64,${fileStr}`) : 'https://res.cloudinary.com/stroyka-ru/image/upload/v1664758091/placeholder_ypo85v.png'
-
+      const realresult = fileStr ? result.url : https://res.cloudinary.com/stroyka-ru/image/upload/v1664758091/placeholder_ypo85v.png
+      
       console.log(result)
             //generate new password
         const salt = await bcrypt.genSalt(12);
@@ -27,7 +28,7 @@ router.post("/register", upload.single('image'), async (req,res) => {
             username: req.body.username,
             email: req.body.email,
             password: req.body.password,
-            avatar: result,
+            avatar: realresult,
             isZakaz4ik: req.body.isZakaz4ik,
             isPodryader: req.body.isPodryader,
             phoneNumber: req.body.phoneNumber, 
