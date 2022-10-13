@@ -297,7 +297,7 @@ router.post("/addDoneWork/:caseId/:dayId", upload.single('image') , async (req, 
         const fileStr = req.body.img;
         console.log(fileStr)
         const result = fileStr ? await cloudinary.uploader.upload(`data:image/jpeg;base64,${fileStr}`) : 'https://res.cloudinary.com/stroyka-ru/image/upload/v1664758091/placeholder_ypo85v.png'
-        const realresult = fileStr ? result.url : https://res.cloudinary.com/stroyka-ru/image/upload/v1664758091/placeholder_ypo85v.png
+        const realresult = fileStr ? result.url : 'https://res.cloudinary.com/stroyka-ru/image/upload/v1664758091/placeholder_ypo85v.png'
         
         console.log(result)
  
@@ -369,7 +369,7 @@ router.post("/addDoneWork/:caseId/:dayId", upload.single('image') , async (req, 
         const fileStr = req.body.img;
         const result = fileStr ? await cloudinary.uploader.upload(`data:image/jpeg;base64,${fileStr}`) : 'https://res.cloudinary.com/stroyka-ru/image/upload/v1664758091/placeholder_ypo85v.png'
 
-        const realresult = fileStr ? result.url : https://res.cloudinary.com/stroyka-ru/image/upload/v1664758091/placeholder_ypo85v.png
+        const realresult = fileStr ? result.url : 'https://res.cloudinary.com/stroyka-ru/image/upload/v1664758091/placeholder_ypo85v.png'
         
         console.log("HELLO 11")
 
