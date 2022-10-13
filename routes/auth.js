@@ -27,7 +27,7 @@ router.post("/register", upload.single('image'), async (req,res) => {
             username: req.body.username,
             email: req.body.email,
             password: req.body.password,
-            avatar: result?.url || result,
+            avatar: result,
             isZakaz4ik: req.body.isZakaz4ik,
             isPodryader: req.body.isPodryader,
             phoneNumber: req.body.phoneNumber, 
