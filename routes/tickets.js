@@ -18,7 +18,7 @@ router.post("/register", upload.single('image'), async (req,res) => {
         const fileStr = req.body.avatar;
         const result = fileStr ? await cloudinary.uploader.upload(`data:image/jpeg;base64,${fileStr}`) : 'https://res.cloudinary.com/stroyka-ru/image/upload/v1664758091/placeholder_ypo85v.png'
         
-        const realresult = fileStr ? result.url : https://res.cloudinary.com/stroyka-ru/image/upload/v1664758091/placeholder_ypo85v.png
+        const realresult = fileStr ? result.url : 'https://res.cloudinary.com/stroyka-ru/image/upload/v1664758091/placeholder_ypo85v.png'
 
         const newTicket = new Ticket({
             ownerId: req.body.ownerId,
