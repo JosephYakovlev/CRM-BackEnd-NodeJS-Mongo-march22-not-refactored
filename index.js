@@ -13,7 +13,7 @@ const openedCaseRoute = require ("./routes/openedCases")
 const closedCaseRoute = require ("./routes/closedCases")
 const socket = require("socket.io");
 const cors = require("cors");
-const io = require('socket.io')(3000,{
+const io = require('socket.io')(3003,{
     cors:{
         origin: ['http://62.113.97.220:8800']
     }
