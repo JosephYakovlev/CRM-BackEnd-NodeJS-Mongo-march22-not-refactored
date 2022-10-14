@@ -9,11 +9,6 @@ const morgan = require("morgan");
 const userRoute = require("./routes/users");
 const authRoute = require("./routes/auth");
 const ticketRoute = require("./routes/tickets")
-const firmRoute = require("./routes/firms")
-const buildingobjectsRoute = require("./routes/BuildingObjects")
-const buildingprocessesRoute = require("./routes/buildingProcesses")
-const indPredRoute = require ("./routes/IndPreds")
-const samozRoute = require ("./routes/samoz")
 const openedCaseRoute = require ("./routes/openedCases")
 const closedCaseRoute = require ("./routes/closedCases")
 const socket = require("socket.io");
@@ -43,11 +38,6 @@ app.use(express.json({ extended: true}))
 app.use("/api/users",userRoute)
 app.use("/api/auth",authRoute)
 app.use("/api/ticket",ticketRoute)
-app.use("/api/firms",firmRoute)
-app.use("/api/buildingobjects",buildingobjectsRoute)
-app.use("/api/buildingprocesses",buildingprocessesRoute)
-app.use("/api/indPreds",indPredRoute)
-app.use("/api/samoz",samozRoute)
 app.use("/api/openedCases",openedCaseRoute)
 app.use("/api/closedCases",closedCaseRoute)
 
