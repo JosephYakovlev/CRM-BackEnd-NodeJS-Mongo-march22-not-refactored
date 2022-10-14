@@ -42,9 +42,9 @@ router.get("/getclosedCaseid/:userId", async(req,res)=>{
     try{
 
         const userId = req.params.userId
-        console.log(userId)
+
         const closedCase = await ClosedCase.findOne({ owners: [userId] })
-        console.log("foound")
+
         const {_id,...other} = closedCase._doc
         res.status(200).json(_id)  
     }catch(err){

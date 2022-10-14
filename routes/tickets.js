@@ -17,7 +17,6 @@ router.post("/register", upload.single('image'), async (req,res) => {
 
         const fileStr = req.body.avatar;
         const result = fileStr ? await cloudinary.uploader.upload(`data:image/jpeg;base64,${fileStr}`) : 'https://res.cloudinary.com/stroyka-ru/image/upload/v1664758091/placeholder_ypo85v.png'
-        
         const realresult = fileStr ? result.url : 'https://res.cloudinary.com/stroyka-ru/image/upload/v1664758091/placeholder_ypo85v.png'
 
         const newTicket = new Ticket({
@@ -145,8 +144,6 @@ router.put("/:id/addOffer", async(req,res)=>{
     
      try{
 
-
-        console.log("ADDOFFER")
        
         const updatedTicketOwner = await User.updateOne({_id: `${req.body.ticketOwnerId}`},{ $push: {offers: req.body } });
         
@@ -167,14 +164,10 @@ router.put("/:id/addOffer", async(req,res)=>{
 router.post("/approved", async(req,res)=>{
     
     const approveData = req.body
-    console.log('APPROVED')
-    console.log(approveData)
    
-
     
     try{
 
-        console.log("HELLO 3")
 
         const concludingCase = {
             status: 'CONCLUDING',
@@ -210,9 +203,7 @@ router.post("/approved", async(req,res)=>{
             averageAffirm: [],
         };
 
-       
-       
-        console.log("HELLO 18")
+    
 
         const newmessage = {
             messageSender: 'BOT BUILDER',
@@ -248,8 +239,6 @@ router.post("/approved", async(req,res)=>{
         });
 
 
-        console.log("HELLO 12")
-
          const DialogForReciever = {
             companion: approveData.currentTicket._id ,
             type: 'CONCLUDING CONTRACT',
@@ -272,8 +261,6 @@ router.post("/approved", async(req,res)=>{
             $push: { dialogs: DialogForReciever} 
         });
         
-
-        console.log("HELLO 2") 
        
         const updatedTicketOwner = await User.updateOne({
             _id: `${approveData.currentTicket.ownerId}`,
@@ -284,8 +271,6 @@ router.post("/approved", async(req,res)=>{
             $set: {"offers.$.checked": true}
         });
 
-        console.log("HELLO 1")
-
         const updatedTicketOwnerO = await User.updateOne({
             _id: `${approveData.currentTicket.ownerId}`
         },
@@ -293,7 +278,6 @@ router.post("/approved", async(req,res)=>{
             $push: {concludingContracts: concludingCase},
         });
 
-        console.log("HELLO")
        
         const user = await User.findById(approveData.currentTicket.ownerId)
         
@@ -313,7 +297,6 @@ router.post("/approved", async(req,res)=>{
             $set: {"outgoingOffers.$.checked": true}
         });
 
-        console.log("HELLO 5" )
         const conContractOut = {
             caseTicket: user.concludingContracts[indexInOwner].caseTicket,
             caseOwner: user.concludingContracts[indexInOwner].caseOwner,
@@ -337,8 +320,6 @@ router.post("/approved", async(req,res)=>{
             i.caseContractor == approveData.offerOwner._id
           })
        
-        console.log("HELLO 6")
-        console.log(ConCase)
 
 
     

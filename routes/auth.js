@@ -13,13 +13,11 @@ router.post("/register", upload.single('image'), async (req,res) => {
 
     
     try{
-      console.log(req.body)
 
       const fileStr = req.body.avatar;
       const result = fileStr ? await cloudinary.uploader.upload(`data:image/jpeg;base64,${fileStr}`) : 'https://res.cloudinary.com/stroyka-ru/image/upload/v1664758091/placeholder_ypo85v.png'
       const realresult = fileStr ? result.url : 'https://res.cloudinary.com/stroyka-ru/image/upload/v1664758091/placeholder_ypo85v.png'
       
-      console.log(result)
             //generate new password
         const salt = await bcrypt.genSalt(12);
         const hashedPassword = await bcrypt.hash(req.body.password, salt);
@@ -110,8 +108,6 @@ router.post(
       
       const isMatch = (password == user.password ? true : false )
 
-      console.log('ISMATCH')
-      console.log(isMatch)
   
       if (password != user.password) {
         return res.status(200).json({ message: 400 })
@@ -138,8 +134,6 @@ router.post(
 
         })).then(async (conOutContracts) => { 
             
-          console.log('RELOAD 1')
-       
 
           const conContrs = conContracts.concat(conOutContracts)
 
@@ -151,9 +145,6 @@ router.post(
 
              
           })).then((fullRunContrs) =>{
-            console.log(fullRunContrs.length)
-            console.log("CONCOTNRS")
-            console.log(conContrs.length)
 
             
 
@@ -230,8 +221,6 @@ router.get("/reload/:id", async(req,res) => {
                 return OwnerContract
         })).then(async (conOutContracts) => { 
             
-              console.log('RELOAD 1')
-           
 
               const conContrs = conContracts.concat(conOutContracts)
 
@@ -243,11 +232,6 @@ router.get("/reload/:id", async(req,res) => {
 
                  
               })).then((fullRunContrs) =>{
-                console.log(fullRunContrs.length)
-                console.log("CONCOTNRS")
-                console.log(conContrs.length)
-  
-                
   
                 res.status(200).json({user,conContrs,fullRunContrs}) 
               })

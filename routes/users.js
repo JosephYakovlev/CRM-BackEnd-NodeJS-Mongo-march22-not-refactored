@@ -15,13 +15,7 @@ const emitter = new events.EventEmitter();
 
 router.post("/addmoney", async(req,res) => {
             try{
-                
-                console.log("HELLO 11")
-
-        
-
-        console.log("HELLO 12")
-        console.log(req.body)
+           
          
         const newTrans = new Transaction({
             Sender: req.body.Sender,
@@ -36,7 +30,7 @@ router.post("/addmoney", async(req,res) => {
 
         const newTansaction = await newTrans.save()
 
-        console.log(newTansaction)
+
 
         const transToReciever = await User.updateOne({
             _id: `${newTansaction.Reciever}`,
@@ -60,9 +54,7 @@ router.post("/addmoney", async(req,res) => {
             
         });
 
-        console.log("HELLO 15")
-        console.log(transToReciever)
-
+    
         
         
         res.status(200).json(req.body.Reciever)
@@ -157,7 +149,7 @@ router.get('/userFindOne', async (req,res)=>{
 router.get("/", async(req,res)=>{
     try{
         const users = await User.find({isPodryader: true}).sort({datec: -1});
-        console.log("UUSSSERS")
+   
         res.status(200).json(users)  
     }catch(err){
         res.status(500).json(err)
@@ -167,7 +159,7 @@ router.get("/", async(req,res)=>{
 router.get("/contractors", async(req,res)=>{
     try{
         const users = await User.find({});
-        console.log(users)
+     
         res.status(200).json(users)  
     }catch(err){
         res.status(500).json(err)
@@ -273,6 +265,43 @@ router.put("/addfirm/:userId", async (req, res) => {
         
         const updatedConcContract = user.concludingContracts[currentConcContractInex]
 
+
+        const transToOwner = await User.updateOne({
+            _id: req.params.id,
+            "dialogs.companion": updatedConcContract.caseTicket
+        },
+        { 
+            $push: { 
+             "dialogs.$.messages": {
+                  messageSender: 'BOT BUILDER',
+                  messageSenderAvatar: 'https://res.cloudinary.com/stroyka-ru/image/upload/v1664024876/logo_a2yphv.png',
+                  messageSenderUsername: 'BOT BUILDER',
+                  messageReciever: '',
+                  title: 'Добавлено новое условие.',
+                  theme: 'PERSONAL MESSAGE',
+                  belongs: '',
+                  seen: 'UNSEEN' 
+                }} 
+        });
+
+        const transToReciever = await User.updateOne({
+            _id: updatedConcContract.caseContractor,
+            "dialogs.companion": updatedConcContract.caseTicket
+        },
+        { 
+            $push: { 
+             "dialogs.$.messages": {
+                  messageSender: 'BOT BUILDER',
+                  messageSenderAvatar: 'https://res.cloudinary.com/stroyka-ru/image/upload/v1664024876/logo_a2yphv.png',
+                  messageSenderUsername: 'BOT BUILDER',
+                  messageReciever: '',
+                  title: 'Добавлено новое условие.',
+                  theme: 'PERSONAL MESSAGE',
+                  belongs: '',
+                  seen: 'UNSEEN' 
+                }} 
+        });
+
         res.status(200).json(updatedConcContract)
         // .json(user.concludingContracts[currentConcContractInex])
     })
@@ -316,7 +345,6 @@ router.put("/addfirm/:userId", async (req, res) => {
 
                     return runCon
             })).then((runningContracts) => { 
-                console.log(runningContracts)
                 res.status(200).json(runningContracts) 
             })   
     
@@ -408,30 +436,26 @@ router.get("/getconclcontracts/:id", async(req,res)=>{
 
 router.put("/acceptTermByOwner/:termId/:ConContractId/:ownerId/:contractorId", async (req, res) => {
     try {
-        console.log("HELLO 1")
+       
         const user = await User.findById(req.params.ownerId);
       
-        console.log("HELLO 2")
-        console.log(user)
+      
 
 
         const ConContr = user.concludingContracts.find(i => {
             return i._id == req.params.ConContractId
         })
 
-        console.log("HELLO 3")
-        console.log(req.params.contractorId)
+      
 
         const newTerms = ConContr.terms.map(i=>{
             if(i._doc._id == req.params.termId) {
-                console.log(i)
+             
                 return {...i._doc, acceptedByOwner: req.params.ownerId }
             } else
             return i
         })
 
-        console.log("HELLO 4")
-        console.log(newTerms)
         
         const updateTicketOwner = await User.updateOne({
             _id: `${req.params.ownerId}`,
@@ -441,8 +465,44 @@ router.put("/acceptTermByOwner/:termId/:ConContractId/:ownerId/:contractorId", a
             $set: { "concludingContracts.$.terms": newTerms} 
         });
 
-        console.log("HELLO 5")
-        console.log(updateTicketOwner)
+        const transToOwner = await User.updateOne({
+            _id: req.params.ownerId,
+            "dialogs.companion": ConContr.caseTicket
+        },
+        { 
+            $push: { 
+             "dialogs.$.messages": {
+                  messageSender: 'BOT BUILDER',
+                  messageSenderAvatar: 'https://res.cloudinary.com/stroyka-ru/image/upload/v1664024876/logo_a2yphv.png',
+                  messageSenderUsername: 'BOT BUILDER',
+                  messageReciever: '',
+                  title: 'Отредактировано одно условие.',
+                  theme: 'PERSONAL MESSAGE',
+                  belongs: '',
+                  seen: 'UNSEEN' 
+                }} 
+        });
+
+        
+
+        const transToReciever = await User.updateOne({
+            _id: req.params.contractorId,
+            "dialogs.companion": ConContr.caseTicket
+        },
+        { 
+            $push: { 
+             "dialogs.$.messages": {
+                  messageSender: 'BOT BUILDER',
+                  messageSenderAvatar: 'https://res.cloudinary.com/stroyka-ru/image/upload/v1664024876/logo_a2yphv.png',
+                  messageSenderUsername: 'BOT BUILDER',
+                  messageReciever: '',
+                  title: 'Отредактировано одно условие.',
+                  theme: 'PERSONAL MESSAGE',
+                  belongs: '',
+                  seen: 'UNSEEN' 
+                }} 
+        });
+        
         res.status(200).json({owner: req.params.ownerId, contractor: req.params.contractorId})
 
     } catch (err) {
@@ -452,30 +512,26 @@ router.put("/acceptTermByOwner/:termId/:ConContractId/:ownerId/:contractorId", a
 
 router.put("/acceptTermByContractor/:termId/:ConContractId/:ownerId/:contractorId", async (req, res) => {
     try {
-        console.log("HELLO 6")
+        
         const user = await User.findById(req.params.ownerId);
-      
-        console.log("HELLO 7")
-        console.log(req.params.contractorId)
+    
 
 
         const ConContr = user.concludingContracts.find(i => {
             return i._id == req.params.ConContractId
         })
 
-        console.log("HELLO 8")
-        console.log(ConContr)
+      
 
         const newTerms = ConContr.terms.map(i=>{
             if(i._doc._id == req.params.termId) {
-                console.log(i)
+               
                 return {...i._doc, acceptedByContractor: req.params.contractorId }
             } else
             return i
         })
 
-        console.log("HELLO 9")
-        console.log(newTerms)
+  
         
         const updateTicketOwner = await User.updateOne({
             _id: `${req.params.ownerId}`,
@@ -485,8 +541,43 @@ router.put("/acceptTermByContractor/:termId/:ConContractId/:ownerId/:contractorI
             $set: { "concludingContracts.$.terms": newTerms} 
         });
 
-        console.log("HELLO 10")
-        console.log(updateTicketOwner)
+        const transToOwner = await User.updateOne({
+            _id: req.params.ownerId,
+            "dialogs.companion": ConContr.caseTicket
+        },
+        { 
+            $push: { 
+             "dialogs.$.messages": {
+                  messageSender: 'BOT BUILDER',
+                  messageSenderAvatar: 'https://res.cloudinary.com/stroyka-ru/image/upload/v1664024876/logo_a2yphv.png',
+                  messageSenderUsername: 'BOT BUILDER',
+                  messageReciever: '',
+                  title: 'Отредактировано одно условие.',
+                  theme: 'PERSONAL MESSAGE',
+                  belongs: '',
+                  seen: 'UNSEEN' 
+                }} 
+        });
+
+        
+
+        const transToReciever = await User.updateOne({
+            _id: req.params.contractorId,
+            "dialogs.companion": ConContr.caseTicket
+        },
+        { 
+            $push: { 
+             "dialogs.$.messages": {
+                  messageSender: 'BOT BUILDER',
+                  messageSenderAvatar: 'https://res.cloudinary.com/stroyka-ru/image/upload/v1664024876/logo_a2yphv.png',
+                  messageSenderUsername: 'BOT BUILDER',
+                  messageReciever: '',
+                  title: 'Отредактировано одно условие.',
+                  theme: 'PERSONAL MESSAGE',
+                  belongs: '',
+                  seen: 'UNSEEN' 
+                }} 
+        });
         res.status(200).json({owner: req.params.ownerId, contractor: req.params.contractorId})
 
     } catch (err) {
@@ -497,18 +588,17 @@ router.put("/acceptTermByContractor/:termId/:ConContractId/:ownerId/:contractorI
 
   router.put("/patchterm/:ConContractId/:ownerId/:contractorId", async (req, res) => {
     try {
-        console.log("HELLO 11")
-        console.log(req.body)
+      
         const user = await User.findById(req.params.ownerId);
       
-        console.log("HELLO 12")
+
 
 
         const ConContr = user.concludingContracts.find(i => {
             return i._id == req.params.ConContractId
         })
 
-        console.log("HELLO 13")
+     
 
         const newTerms = ConContr.terms.map(i=>{
             if(i._doc._id == req.body._id) {
@@ -520,14 +610,13 @@ router.put("/acceptTermByContractor/:termId/:ConContractId/:ownerId/:contractorI
                     acceptedByContractor: req.body.acceptedByContractor,
                     acceptedByOwner: req.body.acceptedByOwner 
                 }
-                console.log(termitos)
+              
                 return termitos
             } else
             return i
         })
 
-        console.log("HELLO 14")
-        console.log(newTerms)
+
         
         const updateTicketOwner = await User.updateOne({
             _id: `${req.params.ownerId}`,
@@ -535,10 +624,49 @@ router.put("/acceptTermByContractor/:termId/:ConContractId/:ownerId/:contractorI
         },
         {
             $set: { "concludingContracts.$.terms": newTerms} 
+            
         });
 
-        console.log("HELLO 15")
-        console.log(updateTicketOwner)
+
+        const transToOwner = await User.updateOne({
+            _id: req.params.ownerId,
+            "dialogs.companion": ConContr.caseTicket
+        },
+        { 
+            $push: { 
+             "dialogs.$.messages": {
+                  messageSender: 'BOT BUILDER',
+                  messageSenderAvatar: 'https://res.cloudinary.com/stroyka-ru/image/upload/v1664024876/logo_a2yphv.png',
+                  messageSenderUsername: 'BOT BUILDER',
+                  messageReciever: '',
+                  title: 'Отредактировано одно условие.',
+                  theme: 'PERSONAL MESSAGE',
+                  belongs: '',
+                  seen: 'UNSEEN' 
+                }} 
+        });
+
+        
+
+        const transToReciever = await User.updateOne({
+            _id: req.params.contractorId,
+            "dialogs.companion": ConContr.caseTicket
+        },
+        { 
+            $push: { 
+             "dialogs.$.messages": {
+                  messageSender: 'BOT BUILDER',
+                  messageSenderAvatar: 'https://res.cloudinary.com/stroyka-ru/image/upload/v1664024876/logo_a2yphv.png',
+                  messageSenderUsername: 'BOT BUILDER',
+                  messageReciever: '',
+                  title: 'Отредактировано одно условие.',
+                  theme: 'PERSONAL MESSAGE',
+                  belongs: '',
+                  seen: 'UNSEEN' 
+                }} 
+        });
+
+
         res.status(200).json({owner: req.params.ownerId, contractor: req.params.contractorId})
 
     } catch (err) {
@@ -549,28 +677,24 @@ router.put("/acceptTermByContractor/:termId/:ConContractId/:ownerId/:contractorI
 
   router.put("/deleteterm/:ConContractId/:ownerId/:contractorId", async (req, res) => {
     try {
-        console.log("HELLO 16")
-        console.log(req.body)
+   
         const user = await User.findById(req.params.ownerId);
       
-        console.log("HELLO 17")
+ 
 
 
         const ConContr = user.concludingContracts.find(i => {
             return i._id == req.params.ConContractId
         })
 
-        console.log("HELLO 18")
-        console.log(req.body._id)
+     
         
 
         const newTerms = ConContr.terms.filter(i => 
             String(i._id) !== req.body._id
         )
 
-        console.log("HELLO 19")
-
-        console.log(newTerms)
+  
         
         const updateTicketOwner = await User.updateOne({
             _id: `${req.params.ownerId}`,
@@ -580,7 +704,47 @@ router.put("/acceptTermByContractor/:termId/:ConContractId/:ownerId/:contractorI
             $set: { "concludingContracts.$.terms": newTerms} 
         });
 
-        console.log("HELLO 20")
+       
+
+        const transToOwner = await User.updateOne({
+            _id: req.params.ownerId,
+            "dialogs.companion": ConContr.caseTicket
+        },
+        { 
+            $push: { 
+             "dialogs.$.messages": {
+                  messageSender: 'BOT BUILDER',
+                  messageSenderAvatar: 'https://res.cloudinary.com/stroyka-ru/image/upload/v1664024876/logo_a2yphv.png',
+                  messageSenderUsername: 'BOT BUILDER',
+                  messageReciever: '',
+                  title: 'Удалено одно условие.',
+                  theme: 'PERSONAL MESSAGE',
+                  belongs: '',
+                  seen: 'UNSEEN' 
+                }} 
+        });
+
+        
+
+        const transToReciever = await User.updateOne({
+            _id: req.params.contractorId,
+            "dialogs.companion": ConContr.caseTicket
+        },
+        { 
+            $push: { 
+             "dialogs.$.messages": {
+                  messageSender: 'BOT BUILDER',
+                  messageSenderAvatar: 'https://res.cloudinary.com/stroyka-ru/image/upload/v1664024876/logo_a2yphv.png',
+                  messageSenderUsername: 'BOT BUILDER',
+                  messageReciever: '',
+                  title: 'Удалено одно условие.',
+                  theme: 'PERSONAL MESSAGE',
+                  belongs: '',
+                  seen: 'UNSEEN' 
+                }} 
+        });
+
+
         res.status(200).json({owner: req.params.ownerId, contractor: req.params.contractorId})
 
     } catch (err) {
@@ -590,13 +754,9 @@ router.put("/acceptTermByContractor/:termId/:ConContractId/:ownerId/:contractorI
 
   router.post("/paydeposit/:ConContractId/:ownerId/:caseTicket", async (req, res) => {
     try {
-        console.log("HELLO 16")
       
         const {owner, contractor, ...other} = req.body
 
-        console.log("HELLO 12")
-        console.log(req.body)
-         
         const newTrans = new Transaction({
             Sender: req.body.Sender,
             Reciever: req.body.Reciever,
@@ -609,9 +769,7 @@ router.put("/acceptTermByContractor/:termId/:ConContractId/:ownerId/:contractorI
         const newTansaction = await newTrans.save()
 
         
-        console.log(newTansaction)
 
-        
         const updateTicketOwner = await User.updateOne({
             _id: `${req.params.ownerId}`,
             "concludingContracts._id": req.params.ConContractId,
@@ -620,10 +778,6 @@ router.put("/acceptTermByContractor/:termId/:ConContractId/:ownerId/:contractorI
             $set: { "concludingContracts.$.depositCustomer": newTansaction.Summ},
             $push: { "concludingContracts.$.transactions": newTansaction} 
         });
-
-
-        console.log('HELLO !!$!')
-        
 
         const transToReciever = await User.updateOne({
             _id: `${newTansaction.Sender}`,
@@ -667,7 +821,6 @@ router.put("/acceptTermByContractor/:termId/:ConContractId/:ownerId/:contractorI
 
         });
 
-        console.log("HELLO 15")
         res.status(200).json({owner: req.params.ownerId, contractor: req.body.Sender})
 
     } catch (err) {
@@ -678,7 +831,6 @@ router.put("/acceptTermByContractor/:termId/:ConContractId/:ownerId/:contractorI
 
   router.post("/msgwithdialog", async (req, res) => {
     try {
-        console.log("HELLO 18")
 
         const {senderImg, recieverImg, recieverUserName, ...other} = req.body
 
@@ -700,7 +852,6 @@ router.put("/acceptTermByContractor/:termId/:ConContractId/:ownerId/:contractorI
         });
 
 
-        console.log("HELLO 12")
 
          const DialogForReciever = {
             companion: req.body.messageSender ,
@@ -719,10 +870,6 @@ router.put("/acceptTermByContractor/:termId/:ConContractId/:ownerId/:contractorI
         });
 
 
-        
-    
-
-        console.log("HELLO 15")
         res.status(200).json({sender: req.body.messageSender, reciever: req.body.messageReciever})
 
     } catch (err) {
@@ -734,7 +881,6 @@ router.put("/acceptTermByContractor/:termId/:ConContractId/:ownerId/:contractorI
 
   router.post("/newmessage", async (req, res) => {
     try {
-        console.log("HELLO 18")
 
          const updateSender = await User.updateOne({
             _id: `${req.body.messageSender}`,
@@ -745,8 +891,6 @@ router.put("/acceptTermByContractor/:termId/:ConContractId/:ownerId/:contractorI
         });
 
 
-        console.log("HELLO 12")
-
          const updateReciever = await User.updateOne({
             _id: `${req.body.messageReciever}`,
             "dialogs.companion": req.body.messageSender,
@@ -755,8 +899,6 @@ router.put("/acceptTermByContractor/:termId/:ConContractId/:ownerId/:contractorI
             $push: { "dialogs.$.messages": req.body} 
         });
 
-
-        console.log("HELLO 15")
         res.status(200).json({sender: req.body.messageSender, reciever: req.body.messageReciever})
 
     } catch (err) {
@@ -767,9 +909,6 @@ router.put("/acceptTermByContractor/:termId/:ConContractId/:ownerId/:contractorI
 
   router.post("/newconcludingmessage", async (req, res) => {
     try {
-        console.log("HELLO 18")
-
-        console.log(req.body)
 
          const updateSender = await User.updateOne({
             _id: `${req.body.messageSender}`,
@@ -780,8 +919,6 @@ router.put("/acceptTermByContractor/:termId/:ConContractId/:ownerId/:contractorI
         });
 
 
-        console.log("HELLO 12")
-
          const updateReciever = await User.updateOne({
             _id: `${req.body.messageReciever}`,
             "dialogs.companion": req.body.belongs
@@ -790,10 +927,6 @@ router.put("/acceptTermByContractor/:termId/:ConContractId/:ownerId/:contractorI
             $push: { "dialogs.$.messages": req.body} 
         });
 
-        console.log(updateSender)
-        console.log(updateReciever)
-
-        console.log("HELLO 15")
         res.status(200).json({sender: req.body.messageSender, reciever: req.body.messageReciever})
 
     } catch (err) {
@@ -804,9 +937,6 @@ router.put("/acceptTermByContractor/:termId/:ConContractId/:ownerId/:contractorI
 
 router.post("/newrunningconmessage", async (req, res) => {
     try {
-        console.log("HELLO 18")
-
-        console.log(req.body)
 
          const updateSender = await User.updateOne({
             _id: `${req.body.messageSender}`,
@@ -817,7 +947,6 @@ router.post("/newrunningconmessage", async (req, res) => {
         });
 
 
-        console.log("HELLO 12")
 
          const updateReciever = await User.updateOne({
             _id: `${req.body.messageReciever}`,
@@ -828,7 +957,6 @@ router.post("/newrunningconmessage", async (req, res) => {
         });
 
 
-        console.log("HELLO 15")
         res.status(200).json({sender: req.body.messageSender, reciever: req.body.messageReciever})
 
     } catch (err) {
@@ -842,9 +970,7 @@ router.post("/seendialog/:user/:dialog/:companion", async (req, res) => {
 
             
             if(req.params.companion != "BUILDER") {
-            console.log(req.params.user)
-            console.log(req.params.dialog)
-            console.log(req.params.companion)
+       
 
             const user = await User.findById(req.params.user)
 
@@ -892,7 +1018,7 @@ router.post("/seendialog/:user/:dialog/:companion", async (req, res) => {
 
             const dicomp = currdia.type === "PERSONAL MESSAGE" ? req.params.user : currdia.companion 
 
-            console.log("HELLO 12")
+            
 
             const updateReciever = await User.updateOne({
                 _id: `${req.params.companion}`,
@@ -903,7 +1029,6 @@ router.post("/seendialog/:user/:dialog/:companion", async (req, res) => {
             });
 
 
-            console.log("HELLO 15")
             res.status(200).json({sender: req.params.user, reciever: req.params.companion})
         } else {
             const user = await User.findById(req.params.user)
@@ -933,7 +1058,6 @@ router.post("/seendialog/:user/:dialog/:companion", async (req, res) => {
                 $set: { "dialogs.$.messages": nmsgforse} 
             });
 
-            console.log(updateSender)
             res.status(200).json({sender: req.params.user, reciever: req.params.companion})
 
         }

@@ -48,7 +48,6 @@ router.post("/registerCase",  async (req,res) => {
                   paid: 0
           }]
 
-        console.log(realworkdays)
       
         const newTrans = new Transaction({
             Sender: req.body.caseOwner,
@@ -59,7 +58,6 @@ router.post("/registerCase",  async (req,res) => {
             PayFor: req.body._id
         })
 
-        console.log(newTrans)
 
         const newTansaction = await newTrans.save()
 
@@ -160,8 +158,6 @@ router.post("/registerCase",  async (req,res) => {
             $push: {runningContracts: openedCase._id}
         })
 
-        console.log("HELLO 18")
-
         const newmessage = {
             messageSender: 'BOT BUILDER',
             messageSenderAvatar: 'https://res.cloudinary.com/stroyka-ru/image/upload/v1664024876/logo_a2yphv.png',
@@ -213,8 +209,6 @@ router.post("/registerCase",  async (req,res) => {
         });
 
 
-        console.log("HELLO 12")
-
          const DialogForReciever = {
             companion: openedCase._id ,
             type: 'RUNNING CONTRACT',
@@ -254,10 +248,6 @@ router.post("/registerCase",  async (req,res) => {
                 }} 
         });
         
-
-        console.log("HELLO 2") 
-        
-     
         res.status(200).json(openedCase);
         
     } catch(err){
@@ -271,9 +261,9 @@ router.get("/getopenedCaseid/:userId", async(req,res)=>{
     try{
 
         const userId = req.params.userId
-        console.log(userId)
+
         const openedCase = await OpenedCase.findOne({ owners: [userId] })
-        console.log("foound")
+     
         const {_id,...other} = openedCase._doc
         res.status(200).json(_id)  
     }catch(err){
@@ -295,18 +285,11 @@ router.post("/addDoneWork/:caseId/:dayId", upload.single('image') , async (req, 
 
 
         const fileStr = req.body.img;
-        console.log(fileStr)
+
         const result = fileStr ? await cloudinary.uploader.upload(`data:image/jpeg;base64,${fileStr}`) : 'https://res.cloudinary.com/stroyka-ru/image/upload/v1664758091/placeholder_ypo85v.png'
         const realresult = fileStr ? result.url : 'https://res.cloudinary.com/stroyka-ru/image/upload/v1664758091/placeholder_ypo85v.png'
-        
-        console.log(result)
  
-        console.log("HELLO 11")
-
         const {owner, contractor, img, ...other} = req.body
-
-        console.log("HELLO 12")
-        console.log(other)
 
         const addedWorkDone = await OpenedCase.updateOne({
             _id: `${req.params.caseId}`,
@@ -352,8 +335,6 @@ router.post("/addDoneWork/:caseId/:dayId", upload.single('image') , async (req, 
             }
         });
 
-        console.log("HELLO 15")
-        console.log(addedWorkDone)
         res.status(200).json({owner, contractor})
 
     } catch (err) {
@@ -368,19 +349,11 @@ router.post("/addDoneWork/:caseId/:dayId", upload.single('image') , async (req, 
 
         const fileStr = req.body.img;
         const result = fileStr ? await cloudinary.uploader.upload(`data:image/jpeg;base64,${fileStr}`) : 'https://res.cloudinary.com/stroyka-ru/image/upload/v1664758091/placeholder_ypo85v.png'
-
         const realresult = fileStr ? result.url : 'https://res.cloudinary.com/stroyka-ru/image/upload/v1664758091/placeholder_ypo85v.png'
-        
-        console.log("HELLO 11")
 
-        
-
-        
 
         const {owner, contractor, img, ...other} = req.body
 
-        console.log("HELLO 12")
-        console.log(other)
 
         const addedWorker = await OpenedCase.updateOne({
             _id: `${req.params.caseId}`,
@@ -425,10 +398,7 @@ router.post("/addDoneWork/:caseId/:dayId", upload.single('image') , async (req, 
                 }
             }
         });
-        
-
-        console.log("HELLO 15")
-        console.log(addedWorker)
+       
         res.status(200).json({owner, contractor})
 
     } catch (err) {
@@ -438,12 +408,11 @@ router.post("/addDoneWork/:caseId/:dayId", upload.single('image') , async (req, 
 
   router.post("/deleteWorker/:caseId/:dayId", async (req, res) => {
     try {
-        console.log("HELLO 11")
+      
 
         const {owner, contractor, ...other} = req.body
 
-        console.log("HELLO 12")
-        console.log(req.body)
+
 
         const addedWorker = await OpenedCase.updateOne({
             _id: `${req.params.caseId}`,
@@ -452,10 +421,7 @@ router.post("/addDoneWork/:caseId/:dayId", upload.single('image') , async (req, 
         {
             $pull: { "workDays.$.workers": {_id: other._id}} 
         });
-        
-
-        console.log("HELLO 15")
-        console.log(addedWorker)
+    
         res.status(200).json({owner, contractor})
 
     } catch (err) {
@@ -466,12 +432,9 @@ router.post("/addDoneWork/:caseId/:dayId", upload.single('image') , async (req, 
 
   router.post("/deleteDoneWork/:caseId/:dayId", async (req, res) => {
     try {
-        console.log("HELLO 11")
+
 
         const {owner, contractor, ...other} = req.body
-
-        console.log("HELLO 12")
-        console.log(req.body)
 
         const addedWorker = await OpenedCase.updateOne({
             _id: `${req.params.caseId}`,
@@ -482,8 +445,6 @@ router.post("/addDoneWork/:caseId/:dayId", upload.single('image') , async (req, 
         });
         
 
-        console.log("HELLO 15")
-        console.log(addedWorker)
         res.status(200).json({owner, contractor})
 
     } catch (err) {
@@ -495,11 +456,8 @@ router.post("/addDoneWork/:caseId/:dayId", upload.single('image') , async (req, 
 
   router.post("/approveDoneWork/:caseId/:dayId", async (req, res) => {
     try {
-        console.log("HELLO 11")
-
         const {owner, contractor, ...other} = req.body
 
-        console.log("HELLO 12")
 
          
         const RngCon = await OpenedCase.findById(req.params.caseId)
@@ -519,8 +477,6 @@ router.post("/addDoneWork/:caseId/:dayId", upload.single('image') , async (req, 
 
         })
 
-        console.log('Hello 13')
-        console.log(newDoneWork)
 
         const addedWorker = await OpenedCase.updateOne({
             _id: `${req.params.caseId}`,
@@ -567,8 +523,6 @@ router.post("/addDoneWork/:caseId/:dayId", upload.single('image') , async (req, 
         });
         
 
-        console.log("HELLO 15")
-        console.log(addedWorker)
         res.status(200).json({owner, contractor})
 
     } catch (err) {
@@ -580,11 +534,10 @@ router.post("/addDoneWork/:caseId/:dayId", upload.single('image') , async (req, 
 
   router.post("/approveWorker/:caseId/:dayId", async (req, res) => {
     try {
-        console.log("HELLO 11")
+
 
         const {owner, contractor, ...other} = req.body
 
-        console.log("HELLO 12")
 
          
         const RngCon = await OpenedCase.findById(req.params.caseId)
@@ -603,9 +556,6 @@ router.post("/addDoneWork/:caseId/:dayId", upload.single('image') , async (req, 
             }
 
         })
-
-        console.log('Hello 13')
-        console.log(newWorkers)
 
         const addedWorker = await OpenedCase.updateOne({
             _id: `${req.params.caseId}`,
@@ -653,8 +603,6 @@ router.post("/addDoneWork/:caseId/:dayId", upload.single('image') , async (req, 
         });
         
 
-        console.log("HELLO 15")
-        console.log(addedWorker)
         res.status(200).json({owner, contractor})
 
     } catch (err) {
@@ -665,7 +613,7 @@ router.post("/addDoneWork/:caseId/:dayId", upload.single('image') , async (req, 
 
   router.post("/payforwork/:caseId/:dayId", async (req, res) => {
     try {
-        console.log("HELLO 11")
+
 
         const {owner, contractor, ...other} = req.body
 
@@ -674,8 +622,6 @@ router.post("/addDoneWork/:caseId/:dayId", upload.single('image') , async (req, 
         const currWrkDay =  RngCon.workDays.find(i => {
             return i._id == req.params.dayId
         })
-        console.log("HELLO 12")
-        console.log(req.body)
          
         const newTrans = new Transaction({
             Sender: req.body.Sender,
@@ -686,7 +632,6 @@ router.post("/addDoneWork/:caseId/:dayId", upload.single('image') , async (req, 
             PayFor: req.body.PayFor
         })
 
-        console.log(newTrans)
 
         const newTansaction = await newTrans.save()
 
@@ -704,9 +649,6 @@ router.post("/addDoneWork/:caseId/:dayId", upload.single('image') , async (req, 
 
         })
 
-        console.log('Hello 13')
-        console.log(newWorkDone)
-
        
 
         const addedWorker = await OpenedCase.updateOne({
@@ -718,9 +660,6 @@ router.post("/addDoneWork/:caseId/:dayId", upload.single('image') , async (req, 
             $push: {transactions: newTansaction}
         });
 
-        
-
-        console.log('HELLO !!$!')
         
 
         const transToReciever = await User.updateOne({
@@ -738,16 +677,13 @@ router.post("/addDoneWork/:caseId/:dayId", upload.single('image') , async (req, 
                     messageSenderAvatar: 'https://res.cloudinary.com/stroyka-ru/image/upload/v1664024876/logo_a2yphv.png',
                     messageSenderUsername: 'BOT BUILDER',
                     messageReciever: '',
-                    title: 'Работа оплачена с личного счета',
+                    title: `Работа #${req.body.PayFor} оплачена с личного счета.`,
                     theme: 'PERSONAL MESSAGE',
                     belongs: '',
                     seen: 'UNSEEN' 
                 }
             }
         });
-
-        console.log("HELLO 15")
-        console.log(transToReciever)
 
         const transToSender = await User.updateOne({
             _id: `${newTansaction.Sender}`,
@@ -764,16 +700,13 @@ router.post("/addDoneWork/:caseId/:dayId", upload.single('image') , async (req, 
                     messageSenderAvatar: 'https://res.cloudinary.com/stroyka-ru/image/upload/v1664024876/logo_a2yphv.png',
                     messageSenderUsername: 'BOT BUILDER',
                     messageReciever: '',
-                    title: 'Работа оплачена с личного счета.',
+                    title: `Работа #${req.body.PayFor} оплачена с личного счета.`,
                     theme: 'PERSONAL MESSAGE',
                     belongs: '',
                     seen: 'UNSEEN' 
                 }
             }
         });
-
-        console.log("HELLO 15")
-        console.log(transToSender)
         
         res.status(200).json({owner, contractor})
 
@@ -786,7 +719,7 @@ router.post("/addDoneWork/:caseId/:dayId", upload.single('image') , async (req, 
 
   router.post("/payforworkdeposit/:caseId/:dayId", async (req, res) => {
     try {
-        console.log("HELLO 11")
+     
 
         const {owner, contractor, ...other} = req.body
 
@@ -796,8 +729,6 @@ router.post("/addDoneWork/:caseId/:dayId", upload.single('image') , async (req, 
         const currWrkDay =  RngCon.workDays.find(i => {
             return i._id == req.params.dayId
         })
-        console.log("HELLO 12")
-        console.log(req.body)
          
         const newTrans = new Transaction({
             Sender: req.body.Sender,
@@ -825,12 +756,7 @@ router.post("/addDoneWork/:caseId/:dayId", upload.single('image') , async (req, 
             }
 
         })
-
-
-        console.log('Hello 13')
         
-
-       
 
         const addedWorker = await OpenedCase.updateOne({
             _id: `${req.params.caseId}`,
@@ -843,17 +769,15 @@ router.post("/addDoneWork/:caseId/:dayId", upload.single('image') , async (req, 
         });
 
         
-
-        console.log('HELLO !!$!')
         
 
         const transToReciever = await User.updateOne({
-            _id: `${newTansaction.Reciever}`
+            _id: `${newTansaction.Reciever}`,
+            "dialogs.companion": req.params.caseId,
         },
         { 
             $inc: {
-                wallet: newTansaction.Summ,
-                "dialogs.companion": req.params.caseId,
+                wallet: newTansaction.Summ
             },
             $push: { transactions: newTansaction},
             $push: { 
@@ -862,16 +786,13 @@ router.post("/addDoneWork/:caseId/:dayId", upload.single('image') , async (req, 
                     messageSenderAvatar: 'https://res.cloudinary.com/stroyka-ru/image/upload/v1664024876/logo_a2yphv.png',
                     messageSenderUsername: 'BOT BUILDER',
                     messageReciever: '',
-                    title: 'Работа оплачена с депозита сделки.',
+                    title: `Работа #${req.body.PayFor} оплачена с депозита сделки.`,
                     theme: 'PERSONAL MESSAGE',
                     belongs: '',
                     seen: 'UNSEEN' 
                 }
             }
         });
-
-        console.log("HELLO 15")
-        console.log(transToReciever)
 
         const transToSender = await User.updateOne({
             _id: `${newTansaction.Sender}`,
@@ -885,7 +806,7 @@ router.post("/addDoneWork/:caseId/:dayId", upload.single('image') , async (req, 
                     messageSenderAvatar: 'https://res.cloudinary.com/stroyka-ru/image/upload/v1664024876/logo_a2yphv.png',
                     messageSenderUsername: 'BOT BUILDER',
                     messageReciever: '',
-                    title: 'Работа оплачена с депозита сделки.',
+                    title: `Работа #${req.body.PayFor} оплачена с депозита сделки.`,
                     theme: 'PERSONAL MESSAGE',
                     belongs: '',
                     seen: 'UNSEEN' 
@@ -893,8 +814,6 @@ router.post("/addDoneWork/:caseId/:dayId", upload.single('image') , async (req, 
             }
         });
 
-        console.log("HELLO 15")
-        console.log(transToSender)
         
         res.status(200).json({owner, contractor})
 
@@ -910,7 +829,6 @@ router.post("/addDoneWork/:caseId/:dayId", upload.single('image') , async (req, 
 
   router.post("/payforworker/:caseId/:dayId", async (req, res) => {
     try {
-        console.log("HELLO 11")
 
         const {owner, contractor, ...other} = req.body
 
@@ -919,8 +837,6 @@ router.post("/addDoneWork/:caseId/:dayId", upload.single('image') , async (req, 
         const currWrkDay =  RngCon.workDays.find(i => {
             return i._id == req.params.dayId
         })
-        console.log("HELLO 12")
-        console.log(req.body)
          
         const newTrans = new Transaction({
             Sender: req.body.Sender,
@@ -936,8 +852,6 @@ router.post("/addDoneWork/:caseId/:dayId", upload.single('image') , async (req, 
         const newTansaction = await newTrans.save()
 
         
-        console.log(newTansaction)
-        
         
         const newWorkers = currWrkDay.workers.map(i => {
             if(i._id == newTansaction.PayFor) {
@@ -948,9 +862,6 @@ router.post("/addDoneWork/:caseId/:dayId", upload.single('image') , async (req, 
             }
 
         })
-
-        console.log('Hello 13')
-        console.log(newWorkers)
 
        
 
@@ -963,10 +874,6 @@ router.post("/addDoneWork/:caseId/:dayId", upload.single('image') , async (req, 
             $push: {transactions: newTansaction}
         });
 
-        
-
-        console.log('HELLO !!$!')
-        
 
         const transToReciever = await User.updateOne({
             _id: `${newTansaction.Reciever}`,
@@ -991,9 +898,6 @@ router.post("/addDoneWork/:caseId/:dayId", upload.single('image') , async (req, 
             }
         });
 
-        console.log("HELLO 15")
-        console.log(transToReciever)
-
         const transToSender = await User.updateOne({
             _id: `${newTansaction.Sender}`,
             "dialogs.companion": req.params.caseId,
@@ -1017,8 +921,6 @@ router.post("/addDoneWork/:caseId/:dayId", upload.single('image') , async (req, 
             }
         });
 
-        console.log("HELLO 15")
-        console.log(transToSender)
         
         res.status(200).json({owner, contractor})
 
@@ -1031,7 +933,6 @@ router.post("/addDoneWork/:caseId/:dayId", upload.single('image') , async (req, 
 
   router.post("/payforworkerdeposit/:caseId/:dayId", async (req, res) => {
     try {
-        console.log("HELLO 11")
 
         const {owner, contractor, ...other} = req.body
 
@@ -1040,8 +941,6 @@ router.post("/addDoneWork/:caseId/:dayId", upload.single('image') , async (req, 
         const currWrkDay =  RngCon.workDays.find(i => {
             return i._id == req.params.dayId
         })
-        console.log("HELLO 12")
-        console.log(req.body)
          
         const newTrans = new Transaction({
             Sender: req.body.Sender,
@@ -1051,8 +950,6 @@ router.post("/addDoneWork/:caseId/:dayId", upload.single('image') , async (req, 
             BelongsTo: req.body.BelongsTo,
             PayFor: req.body.PayFor
         })
-
-        console.log(newTrans)
 
         const newTansaction = await newTrans.save()
 
@@ -1070,8 +967,6 @@ router.post("/addDoneWork/:caseId/:dayId", upload.single('image') , async (req, 
 
         })
 
-        console.log('Hello 13')
-        console.log(newWorkers)
 
        
 
@@ -1088,9 +983,6 @@ router.post("/addDoneWork/:caseId/:dayId", upload.single('image') , async (req, 
             $push: {transactions: newTansaction}
         });
 
-        
-
-        console.log('HELLO !!$!')
         
 
         const transToReciever = await User.updateOne({
@@ -1116,8 +1008,6 @@ router.post("/addDoneWork/:caseId/:dayId", upload.single('image') , async (req, 
             }
         });
 
-        console.log("HELLO 15")
-        console.log(transToReciever)
 
         const transToSender = await User.updateOne({
             _id: `${newTansaction.Sender}`,
@@ -1139,8 +1029,6 @@ router.post("/addDoneWork/:caseId/:dayId", upload.single('image') , async (req, 
             }
         });
 
-        console.log("HELLO 15")
-        console.log(transToSender)
         
         res.status(200).json({owner, contractor})
 
@@ -1174,7 +1062,6 @@ router.get('/:id', async (req,res)=>{
 
 try {
     const openedCase = await OpenedCase.findById(req.params.id)
-    console.log(openedCase)
     res.json(openedCase)
 } catch (e) {
     res.status(500).json({message: 'Что-то пошло не так'})
@@ -1186,7 +1073,6 @@ try {
 
 router.post("/voteowner/:caseId", async (req, res) => {
     try {
-        console.log("HELLO 11")
 
         const addedWorker = await OpenedCase.updateOne({
             _id: `${req.params.caseId}`,
@@ -1208,7 +1094,6 @@ router.post("/voteowner/:caseId", async (req, res) => {
 
   router.post("/unvoteowner/:caseId", async (req, res) => {
     try {
-        console.log("HELLO 11")
 
         const addedWorker = await OpenedCase.updateOne({
             _id: `${req.params.caseId}`,
@@ -1230,7 +1115,6 @@ router.post("/voteowner/:caseId", async (req, res) => {
 
   router.post("/votecontractor/:caseId", async (req, res) => {
     try {
-        console.log("HELLO 11")
 
     
         const addedWorker = await OpenedCase.updateOne({
@@ -1251,7 +1135,6 @@ router.post("/voteowner/:caseId", async (req, res) => {
 
   router.post("/unvotecontractor/:caseId", async (req, res) => {
     try {
-        console.log("HELLO 11")
 
     
         const addedWorker = await OpenedCase.updateOne({
@@ -1274,7 +1157,6 @@ router.post("/voteowner/:caseId", async (req, res) => {
 
   router.post("/finalcaseclose/:caseId", async (req, res) => {
     try {
-        console.log("HELLO 11")
 
     
         const caseClosed = await OpenedCase.updateOne({
