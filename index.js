@@ -48,9 +48,7 @@ app.listen(process.env.PORT, () => {
 
 
   io.on('connection', socket => {
-        console.log(socket.id)
-    
-      console.log(`User connected to socket with id #${socket.id}`);
+
     
 
 
