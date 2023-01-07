@@ -103,21 +103,13 @@ const UserSchema = new mongoose.Schema ({
     cloudinary_id:{type: String},
     avatar: {type: String},
     dialogs: [DialogSchema],
-
     tickets: [mongoose.Schema.Types.ObjectId],
-
     buildingObjects: [mongoose.Schema.Types.ObjectId],
-    
     futureObjects: [mongoose.Schema.Types.ObjectId],
-
     ContractObjects: [mongoose.Schema.Types.ObjectId],
-
     objects: [mongoose.Schema.Types.ObjectId],
-
     sklads: [mongoose.Schema.Types.ObjectId],
-
     finishedContracts: [mongoose.Schema.Types.ObjectId],
-
     concludingContracts: [concludingCaseSchema],
     conContractOut: [conContractOutSchema],
     runningContracts: [mongoose.Schema.Types.ObjectId],
