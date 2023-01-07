@@ -47,7 +47,7 @@ router.post("/register", upload.single('image'), async (req,res) => {
                 messageSenderAvatar: 'https://res.cloudinary.com/stroyka-ru/image/upload/v1664024876/logo_a2yphv.png',
                 messageSenderUsername: 'BOT BUILDER',
                 messageReciever: '',
-                title: 'Добро пожаловать в строительный мир Builder! Развивайте ваше дело и успех незаставит себя ждать!',
+                title: 'Добро пожаловать в строительный мир Builder! Развивайте ваше дело и успех не заставит себя ждать!',
                 theme: 'PERSONAL MESSAGE',
                 belongs: '',
                 seen: 'UNSEEN' 
